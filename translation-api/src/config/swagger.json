@@ -11,167 +11,10 @@
     }
   ],
   "paths": {
-    "/login/": {
-      "post": {
-        "tags": [
-          "Login"
-        ],
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/": {
+    "/api/translations/{_id}": {
       "get": {
         "tags": [
-          "Users"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "_page",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "_size",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "_order",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/{_id}": {
-      "get": {
-        "tags": [
-          "Users"
+          "Messages"
         ],
         "description": "",
         "parameters": [
@@ -203,72 +46,11 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ]
-      },
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
         }
       },
-      "delete": {
+      "patch": {
         "tags": [
-          "Users"
+          "Messages"
         ],
         "description": "",
         "parameters": [
@@ -301,108 +83,29 @@
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ]
-      }
-    },
-    "/api/tasks/": {
-      "get": {
-        "tags": [
-          "Tasks"
-        ],
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Tasks"
-        ],
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Task"
+                "$ref": "#/components/schemas/Message"
               }
             },
             "application/xml": {
               "schema": {
-                "$ref": "#/components/schemas/Task"
+                "$ref": "#/components/schemas/Message"
               }
             }
           }
         }
       }
     },
-    "/api/tasks/{_id}/done": {
-      "patch": {
+    "/api/translations/": {
+      "get": {
         "tags": [
-          "Tasks"
+          "Messages"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -422,12 +125,51 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "bearerAuth": {}
+        }
+      },
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
           }
-        ]
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -449,36 +191,24 @@
           "name": "InternalServerError"
         }
       },
-      "User": {
+      "Messages": {
         "type": "object",
         "properties": {
-          "name": {
+          "text": {
             "type": "string",
             "example": ""
           },
-          "email": {
+          "text_translated": {
             "type": "string",
             "example": ""
           },
-          "password": {
+          "status": {
             "type": "string",
             "example": ""
           }
         },
         "xml": {
-          "name": "User"
-        }
-      },
-      "Task": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string",
-            "example": ""
-          }
-        },
-        "xml": {
-          "name": "Task"
+          "name": "Messages"
         }
       }
     },

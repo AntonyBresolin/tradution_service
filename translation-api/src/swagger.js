@@ -17,13 +17,10 @@ const doc = {
         code: "",
         message: "",
       },
-      User: {
-        name: "",
-        email: "",
-        password: "",
-      },
-      Task: {
-        description: "",
+      Messages: {
+        text: "",
+        text_translated: "",
+        status: "",
       },
     },
     securitySchemes: {

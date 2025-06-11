@@ -16,6 +16,41 @@ export const showMessage = async (req, res, next) => {
   }
 };
 
+export const showAllMessages = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Messages"]
+  #swagger.responses[200]
+  */
+
+  try {
+    const messages = await Message.find();
+
+    //res.hateoas_collection(messages);
+    res.json(
+      messages.map((message) => ({
+        id: message._id,
+        text: message.text,
+        text_translated: message.text_translated,
+        status: message.status,
+        links: [
+          {
+            rel: "self",
+            href: `${process.env.SERVER}${req.baseUrl}/${message._id}`,
+            method: "GET",
+          },
+          {
+            rel: "update",
+            href: `${process.env.SERVER}${req.baseUrl}/${message._id}`,
+            method: "PATCH",
+          },
+        ],
+      }))
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createMessage = async (req, res, next) => {
   /*
   #swagger.tags = ["Messages"]
@@ -55,9 +90,12 @@ export const updateMessage = async (req, res, next) => {
   */
 
   try {
-    await Message.updateOne(req.params, { status: req.body.status, text_translated: req.body.text_translated });
+    await Message.updateOne(req.params, {
+      status: req.body.status,
+      text_translated: req.body.text_translated,
+    });
     res.no_content();
   } catch (err) {
     next(err);
   }
-}
+};

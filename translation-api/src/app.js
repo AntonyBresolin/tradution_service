@@ -15,19 +15,8 @@ database.config(process.env.DATABASE);
 
 const app = express();
 
-// CORS configuration for development
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  credentials: false
-};
-
-app.use(cors(corsOptions));
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: false
-}));
+app.use(cors());
+app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

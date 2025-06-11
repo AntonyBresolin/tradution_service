@@ -6,7 +6,7 @@ services:  # Banco de dados MongoDB
     container_name: translation-mongodb
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27020:27017"
     environment:
       MONGO_INITDB_DATABASE: translation_service
     volumes:
@@ -55,7 +55,7 @@ services:  # Banco de dados MongoDB
       - NODE_ENV=development
       - PORT=4040
       - HOST=0.0.0.0
-      - DATABASE=mongodb://mongodb:27017/translation_service
+      - DATABASE=mongodb://mongodb:27020/translation_service
       - RABBITMQ=amqp://admin:admin@rabbitmq:5672
       - CORS_ORIGIN=*
       - API_BASE_URL=http://localhost:4040
@@ -102,7 +102,7 @@ services:  # Banco de dados MongoDB
       - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_PORT: 27020
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: admin
     depends_on:
