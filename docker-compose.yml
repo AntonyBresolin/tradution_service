@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:  # Banco de dados MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: translation-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: translation_service
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - translation-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: translation-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - translation-network
+  # API de Tradução
+  translation-api:
+    build:
+      context: ./translation-api
+      dockerfile: Dockerfile
+    container_name: translation-api
+    restart: unless-stopped
+    ports:
+      - "4040:4040"
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=development
+      - PORT=4040
+      - HOST=0.0.0.0
+      - DATABASE=mongodb://mongodb:27017/translation_service
+      - RABBITMQ=amqp://admin:admin@rabbitmq:5672
+      - CORS_ORIGIN=*
+      - API_BASE_URL=http://localhost:4040
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - translation-network
+    volumes:
+      - ./translation-api:/app
+      - /app/node_modules
+  # Worker de Tradução
+  translation-worker:
+    build:
+      context: ./translation-worker
+      dockerfile: Dockerfile
+    container_name: translation-worker
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ=amqp://admin:admin@rabbitmq:5672
+      - API_BASE_URL=http://translation-api:4040
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      translation-api:
+        condition: service_started
+    networks:
+      - translation-network
+    volumes:
+      - ./translation-worker:/app
+      - /app/node_modules
+
+  # MongoDB Admin Interface (opcional)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: translation-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongodb
+    networks:
+      - translation-network
+
+volumes:
+  mongodb_data:
+    name: translation-mongodb-data
+  rabbitmq_data:
+    name: translation-rabbitmq-data
+
+networks:
+  translation-network:
+    name: translation-network
+    driver: bridge
