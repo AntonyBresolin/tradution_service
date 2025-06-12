@@ -13,28 +13,26 @@ export const getTranslationStatus = async (req, res, next) => {
     const translation = await Message.findOne({ requestId });
 
     if (!translation) {
-      return res.status(404).json({ error: "Translation not found" });
+      return res.status(404).json({ 
+        error: "Translation not found",
+        _links: [
+          { 
+            rel: "create", 
+            href: `${process.env.SERVER}/api/translations`, 
+            method: "POST",
+            description: "Create new translation"
+          },
+          { 
+            rel: "list", 
+            href: `${process.env.SERVER}/api/translations`, 
+            method: "GET",
+            description: "List all translations"
+          }
+        ]
+      });
     }
 
-    const response = {
-      requestId: translation.requestId,
-      status: translation.status,
-      text: translation.text,
-      sourceLanguage: translation.sourceLanguage,
-      targetLanguage: translation.targetLanguage,
-      createdAt: translation.createdAt,
-      updatedAt: translation.updatedAt
-    };
-
-    if (translation.status === "completed") {
-      response.translatedText = translation.text_translated;
-    }
-
-    if (translation.status === "failed") {
-      response.error = translation.errorMessage;
-    }
-
-    res.json(response);
+    res.hateoas_translation(translation);
   } catch (err) {
     next(err);
   }
@@ -61,7 +59,7 @@ export const getSupportedLanguages = async (req, res, next) => {
       }
     };
 
-    res.json(supportedLanguages);
+    res.hateoas_supported_languages(supportedLanguages);
   } catch (err) {
     next(err);
   }
@@ -74,27 +72,19 @@ export const showAllMessages = async (req, res, next) => {
   */
 
   try {
-    const translations = await Message.find();
+    const page = parseInt(req.query._page) || 1;
+    const size = parseInt(req.query._size) || 10;
+    const skip = (page - 1) * size;
 
-    res.json(
-      translations.map((translation) => ({
-        requestId: translation.requestId,
-        text: translation.text,
-        translatedText: translation.text_translated,
-        sourceLanguage: translation.sourceLanguage,
-        targetLanguage: translation.targetLanguage,
-        status: translation.status,
-        createdAt: translation.createdAt,
-        updatedAt: translation.updatedAt,
-        links: [
-          {
-            rel: "self",
-            href: `${process.env.SERVER}/api/translations/${translation.requestId}`,
-            method: "GET",
-          }
-        ],
-      }))
-    );
+    const total = await Message.countDocuments();
+    const totalPages = Math.ceil(total / size);
+    
+    const translations = await Message.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(size);
+
+    res.hateoas_translations_list(translations, { totalPages });
   } catch (err) {
     next(err);
   }
@@ -132,11 +122,7 @@ export const createTranslation = async (req, res, next) => {
       },
     });
 
-    res.status(202).json({
-      requestId: translation.requestId,
-      status: "queued",
-      message: "Translation request received and queued for processing"
-    });
+    res.hateoas_translation_created(translation);
   } catch (err) {
     next(err);
   }
