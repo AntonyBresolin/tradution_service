@@ -2,31 +2,22 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "Tecnologias Emergentes",
-    "description": "Documentação da API criada em sala"
+    "title": "Translation Service API",
+    "description": "API for asynchronous text translation service using microservices architecture"
   },
   "servers": [
     {
-      "url": "http://localhost:4040/"
+      "url": "http://localhost:4040/",
+      "description": "Development server"
     }
   ],
   "paths": {
-    "/api/translations/{_id}": {
+    "/api/translations/languages": {
       "get": {
         "tags": [
-          "Messages"
+          "Translations"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -43,57 +34,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerError"
                 }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Messages"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Message"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/Message"
               }
             }
           }
@@ -101,40 +41,14 @@
       }
     },
     "/api/translations/": {
-      "get": {
-        "tags": [
-          "Messages"
-        ],
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerError"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "tags": [
-          "Messages"
+          "Translations"
         ],
         "description": "",
         "responses": {
-          "201": {
-            "description": "Created"
+          "202": {
+            "description": "Accepted"
           },
           "400": {
             "description": "Bad Request"
@@ -160,12 +74,95 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Message"
+                "$ref": "#/components/schemas/TranslationRequest"
               }
             },
             "application/xml": {
               "schema": {
-                "$ref": "#/components/schemas/Message"
+                "$ref": "#/components/schemas/TranslationRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Translations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "_page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "_size",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/translations/{requestId}": {
+      "get": {
+        "tags": [
+          "Translations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
               }
             }
           }
@@ -175,40 +172,782 @@
   },
   "components": {
     "schemas": {
-      "InternalServerError": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": ""
-          },
-          "message": {
-            "type": "string",
-            "example": ""
-          }
-        },
-        "xml": {
-          "name": "InternalServerError"
-        }
-      },
-      "Messages": {
+      "TranslationRequest": {
         "type": "object",
         "properties": {
           "text": {
             "type": "string",
-            "example": ""
+            "example": "hello world xx"
           },
-          "text_translated": {
+          "sourceLanguage": {
             "type": "string",
-            "example": ""
+            "example": "en"
           },
-          "status": {
+          "targetLanguage": {
             "type": "string",
-            "example": ""
+            "example": "pt"
           }
         },
         "xml": {
-          "name": "Messages"
+          "name": "TranslationRequest"
+        }
+      },
+      "TranslationResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Unique identifier for the translation request"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                  }
+                }
+              },
+              "text": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Original text"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "hello world"
+                  }
+                }
+              },
+              "sourceLanguage": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Source language code"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "en"
+                  }
+                }
+              },
+              "targetLanguage": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Target language code"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "pt"
+                  }
+                }
+              },
+              "status": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Translation status"
+                  },
+                  "enum": {
+                    "type": "array",
+                    "example": [
+                      "queued",
+                      "processing",
+                      "completed",
+                      "failed"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "completed"
+                  }
+                }
+              },
+              "translatedText": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Translated text (only present when status is completed)"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "olá mundo"
+                  }
+                }
+              },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Error message (only present when status is failed)"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Translation failed: unable to translate text"
+                  }
+                }
+              },
+              "createdAt": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "format": {
+                    "type": "string",
+                    "example": "date-time"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Creation timestamp"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "2025-06-11T10:00:00.000Z"
+                  }
+                }
+              },
+              "updatedAt": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "format": {
+                    "type": "string",
+                    "example": "date-time"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Last update timestamp"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "2025-06-11T10:00:05.000Z"
+                  }
+                }
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "xml": {
+                      "name": "link"
+                    },
+                    "$ref": "#/components/schemas/Link"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "TranslationResponse"
+        }
+      },
+      "TranslationCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Unique identifier for the translation request"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                  }
+                }
+              },
+              "status": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Translation status"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "queued"
+                  }
+                }
+              },
+              "message": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Status message"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Translation request received and queued for processing"
+                  }
+                }
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "xml": {
+                      "name": "link"
+                    },
+                    "$ref": "#/components/schemas/Link"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "TranslationCreatedResponse"
+        }
+      },
+      "TranslationUpdate": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "enum": {
+                    "type": "array",
+                    "example": [
+                      "processing",
+                      "completed",
+                      "failed"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "completed"
+                  }
+                }
+              },
+              "text_translated": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Translated text"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "olá mundo"
+                  }
+                }
+              },
+              "errorMessage": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Error message if translation failed"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Unable to translate text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "TranslationUpdate"
+        }
+      },
+      "SupportedLanguages": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "languages": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "type": "array",
+                    "example": [
+                      "en",
+                      "pt",
+                      "es"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "pairs": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "object"
+                      },
+                      "properties": {
+                        "type": "object",
+                        "properties": {
+                          "from": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "string"
+                              },
+                              "example": {
+                                "type": "string",
+                                "example": "en"
+                              }
+                            }
+                          },
+                          "to": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "string"
+                              },
+                              "example": {
+                                "type": "string",
+                                "example": "pt"
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "string"
+                              },
+                              "example": {
+                                "type": "string",
+                                "example": "English to Portuguese"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "object"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "array"
+                      },
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "type": "object",
+                    "properties": {
+                      "en-pt": {
+                        "type": "array",
+                        "example": [
+                          "hello → olá",
+                          "world → mundo"
+                        ],
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "pt-en": {
+                        "type": "array",
+                        "example": [
+                          "olá → hello",
+                          "mundo → world"
+                        ],
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "xml": {
+                      "name": "link"
+                    },
+                    "$ref": "#/components/schemas/Link"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "SupportedLanguages"
+        }
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "rel": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Relationship type"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "self"
+                  }
+                }
+              },
+              "href": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "URL"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "http://localhost:4040/api/translations/550e8400-e29b-41d4-a716-446655440000"
+                  }
+                }
+              },
+              "method": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "HTTP method"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "GET"
+                  }
+                }
+              },
+              "description": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Link description"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Get translation status"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Link"
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "VALIDATION_ERROR"
+                  }
+                }
+              },
+              "message": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Validation failed"
+                  }
+                }
+              },
+              "errors": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "object"
+                      },
+                      "properties": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "string"
+                              },
+                              "example": {
+                                "type": "string",
+                                "example": "sourceLanguage"
+                              }
+                            }
+                          },
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "string"
+                              },
+                              "example": {
+                                "type": "string",
+                                "example": "Source language must be one of: en, pt, es"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ValidationError"
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "INTERNAL_SERVER_ERROR"
+                  }
+                }
+              },
+              "message": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "An unexpected error occurred"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "InternalServerError"
         }
       }
     },
