@@ -89,31 +89,35 @@ export const isLanguagePairSupported = (sourceLanguage, targetLanguage) => {
 
 export const translateText = async (text, sourceLanguage, targetLanguage) => {
   try {
-    if (!text || typeof text !== 'string') {
-      throw new Error('Text is required and must be a string');
+    if (!text || typeof text !== "string") {
+      throw new Error("Text is required and must be a string");
     }
 
-    if (!sourceLanguage || typeof sourceLanguage !== 'string') {
-      throw new Error('Source language is required and must be a string');
+    if (!sourceLanguage || typeof sourceLanguage !== "string") {
+      throw new Error("Source language is required and must be a string");
     }
 
-    if (!targetLanguage || typeof targetLanguage !== 'string') {
-      throw new Error('Target language is required and must be a string');
+    if (!targetLanguage || typeof targetLanguage !== "string") {
+      throw new Error("Target language is required and must be a string");
     }
 
     // Simular delay de processamento
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 2000 + Math.random() * 3000)
+    );
 
     const translationKey = `${sourceLanguage.toLowerCase()}-${targetLanguage.toLowerCase()}`;
     const dictionary = translations[translationKey];
 
     if (!dictionary) {
-      console.warn(`Translation pair ${sourceLanguage}-${targetLanguage} not supported, returning original text`);
+      console.warn(
+        `Translation pair ${sourceLanguage}-${targetLanguage} not supported, returning original text`
+      );
       return `[UNSUPPORTED TRANSLATION: ${sourceLanguage} → ${targetLanguage}] ${text}`;
     }
 
     const lowerText = text.toLowerCase().trim();
-    
+
     if (dictionary[lowerText]) {
       return dictionary[lowerText];
     }
@@ -123,9 +127,9 @@ export const translateText = async (text, sourceLanguage, targetLanguage) => {
     let translatedCount = 0;
 
     for (const word of words) {
-      const punctuation = word.match(/[.,!?;:]+$/)?.[0] || '';
-      const cleanWord = word.replace(/[.,!?;:]+$/, '');
-      
+      const punctuation = word.match(/[.,!?;:]+$/)?.[0] || "";
+      const cleanWord = word.replace(/[.,!?;:]+$/, "");
+
       if (dictionary[cleanWord]) {
         translatedWords.push(dictionary[cleanWord] + punctuation);
         translatedCount++;
@@ -133,24 +137,28 @@ export const translateText = async (text, sourceLanguage, targetLanguage) => {
         translatedWords.push(word);
       }
     }
+    const result = translatedWords.join(" ");
 
-    const result = translatedWords.join(' ');
-    
     if (translatedCount > 0) {
       return result;
     }
-    
+
     console.warn(`Could not translate any words in: "${text}"`);
-    return `[PARTIAL TRANSLATION] ${result}`;
-    
+    throw new Error(
+      `TRANSLATION_FAILED: No translatable words found in text: "${text}". All words remain unchanged.`
+    );
   } catch (error) {
-    console.error('Error in translateText:', error.message);
-    
-    if (error.message.includes('required') || error.message.includes('must be')) {
+    console.error("Error in translateText:", error.message);
+
+    if (
+      error.message.includes("required") ||
+      error.message.includes("must be") ||
+      error.message.includes("TRANSLATION_FAILED")
+    ) {
       throw error;
     }
-    
-    return `[TRANSLATION ERROR: ${error.message}] ${text || 'Unknown text'}`;
+
+    return `[TRANSLATION ERROR: ${error.message}] ${text || "Unknown text"}`;
   }
 };
 
