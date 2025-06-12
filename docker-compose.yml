@@ -41,7 +41,7 @@ services:
       retries: 5
     networks:
       - translation-network
-      
+
   # API de Tradução
   translation-api:
     build:
@@ -51,16 +51,14 @@ services:
     restart: unless-stopped
     ports:
       - "4040:4040"
-    env_file:
-      - ./.env
     environment:
       - NODE_ENV=development
       - PORT=4040
       - HOST=0.0.0.0
+      - HATEOS_SERVER=http://localhost:4040
       - DATABASE=mongodb://mongodb:27017/translation_service
       - RABBITMQ=amqp://admin:admin@rabbitmq:5672
-      - CORS_ORIGIN=*
-      - API_BASE_URL=http://localhost:4040
+      - SERVER=http://translation-api:4040
     depends_on:
       mongodb:
         condition: service_healthy
@@ -68,10 +66,7 @@ services:
         condition: service_healthy
     networks:
       - translation-network
-    volumes:
-      - ./translation-api:/app
-      - /app/node_modules
-
+    
   # Worker de Tradução
   translation-worker:
     build:
@@ -79,23 +74,18 @@ services:
       dockerfile: Dockerfile
     container_name: translation-worker
     restart: unless-stopped
-    env_file:
-      - ./.env
     environment:
       - NODE_ENV=development
       - RABBITMQ=amqp://admin:admin@rabbitmq:5672
-      - API_BASE_URL=http://translation-api:4040
+      - MAX_RETRIES=3    
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       translation-api:
         condition: service_started
+      rabbitmq:
+        condition: service_healthy
     networks:
       - translation-network
-    volumes:
-      - ./translation-worker:/app
-      - /app/node_modules
-
+      
   # MongoDB Admin Interface (opcional)
   mongo-express:
     image: mongo-express:latest
@@ -105,7 +95,7 @@ services:
       - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_MONGODB_PORT: 27020
+      ME_CONFIG_MONGODB_PORT: 27017
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: admin
     depends_on:

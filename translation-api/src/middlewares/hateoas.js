@@ -7,19 +7,19 @@ export default (req, res, next) => {
     const links = [
       { 
         rel: "self", 
-        href: `${process.env.SERVER}/api/translations/${translation.requestId}`, 
+        href: `${process.env.HATEOS_SERVER}/api/translations/${translation.requestId}`, 
         method: "GET",
         description: "Get translation status"
       },
       { 
         rel: "list", 
-        href: `${process.env.SERVER}/api/translations`, 
+        href: `${process.env.HATEOS_SERVER}/api/translations`, 
         method: "GET",
         description: "List all translations"
       },
       { 
         rel: "languages", 
-        href: `${process.env.SERVER}/api/translations/languages`, 
+        href: `${process.env.HATEOS_SERVER}/api/translations/languages`, 
         method: "GET",
         description: "Get supported languages"
       }
@@ -29,7 +29,7 @@ export default (req, res, next) => {
     if (translation.status === 'completed' || translation.status === 'failed') {
       links.push({
         rel: "create-new",
-        href: `${process.env.SERVER}/api/translations`,
+        href: `${process.env.HATEOS_SERVER}/api/translations`,
         method: "POST",
         description: "Create new translation"
       });
@@ -75,7 +75,7 @@ export default (req, res, next) => {
         _links: [
           { 
             rel: "self", 
-            href: `${process.env.SERVER}/api/translations/${translation.requestId}`, 
+            href: `${process.env.HATEOS_SERVER}/api/translations/${translation.requestId}`, 
             method: "GET",
             description: "Get translation details"
           }
@@ -91,19 +91,19 @@ export default (req, res, next) => {
       _links: [
         { 
           rel: "self", 
-          href: `${process.env.SERVER}/api/translations`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations`, 
           method: "GET",
           description: "Current page"
         },
         { 
           rel: "create", 
-          href: `${process.env.SERVER}/api/translations`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations`, 
           method: "POST",
           description: "Create new translation"
         },
         { 
           rel: "languages", 
-          href: `${process.env.SERVER}/api/translations/languages`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations/languages`, 
           method: "GET",
           description: "Get supported languages"
         }
@@ -113,7 +113,7 @@ export default (req, res, next) => {
     if (page > 1) {
       response._links.push({
         rel: "previous",
-        href: `${process.env.SERVER}/api/translations?_page=${page - 1}&_size=${size}`,
+        href: `${process.env.HATEOS_SERVER}/api/translations?_page=${page - 1}&_size=${size}`,
         method: "GET",
         description: "Previous page"
       });
@@ -122,7 +122,7 @@ export default (req, res, next) => {
     if (page < totalPages) {
       response._links.push({
         rel: "next",
-        href: `${process.env.SERVER}/api/translations?_page=${page + 1}&_size=${size}`,
+        href: `${process.env.HATEOS_SERVER}/api/translations?_page=${page + 1}&_size=${size}`,
         method: "GET",
         description: "Next page"
       });
@@ -139,19 +139,19 @@ export default (req, res, next) => {
       _links: [
         { 
           rel: "self", 
-          href: `${process.env.SERVER}/api/translations/${translation.requestId}`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations/${translation.requestId}`, 
           method: "GET",
           description: "Check translation status"
         },
         { 
           rel: "list", 
-          href: `${process.env.SERVER}/api/translations`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations`, 
           method: "GET",
           description: "List all translations"
         },
         { 
           rel: "languages", 
-          href: `${process.env.SERVER}/api/translations/languages`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations/languages`, 
           method: "GET",
           description: "Get supported languages"
         }
@@ -167,19 +167,19 @@ export default (req, res, next) => {
       _links: [
         { 
           rel: "self", 
-          href: `${process.env.SERVER}/api/translations/languages`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations/languages`, 
           method: "GET",
           description: "Supported languages"
         },
         { 
           rel: "create", 
-          href: `${process.env.SERVER}/api/translations`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations`, 
           method: "POST",
           description: "Create new translation"
         },
         { 
           rel: "list", 
-          href: `${process.env.SERVER}/api/translations`, 
+          href: `${process.env.HATEOS_SERVER}/api/translations`, 
           method: "GET",
           description: "List all translations"
         }

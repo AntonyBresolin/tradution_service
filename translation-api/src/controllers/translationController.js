@@ -18,13 +18,13 @@ export const getTranslationStatus = async (req, res, next) => {
         _links: [
           { 
             rel: "create", 
-            href: `${process.env.SERVER}/api/translations`, 
+            href: `${process.env.HATEOS_SERVER}/api/translations`, 
             method: "POST",
             description: "Create new translation"
           },
           { 
             rel: "list", 
-            href: `${process.env.SERVER}/api/translations`, 
+            href: `${process.env.HATEOS_SERVER}/api/translations`, 
             method: "GET",
             description: "List all translations"
           }
