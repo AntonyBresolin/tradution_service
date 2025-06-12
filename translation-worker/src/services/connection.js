@@ -22,7 +22,7 @@ export default async (queue, exchange, routingKey, callback) => {
 
     await channel.consume(
       queue,
-      (message) => {
+      async (message) => {
         const content = message.content.toString();
         const retries = message.properties.headers?.["x-retries"] || 0;
 
@@ -30,22 +30,36 @@ export default async (queue, exchange, routingKey, callback) => {
           console.log(colors.green("==> Mensagem recebida:"), content);
           console.log(colors.green("===> Quantidade de tentativas:"), retries);
 
-          // forçando um erro para teste
-          // throw new Error("Erro ao processar a mensagem!");
-
-          callback(JSON.parse(content));
+          await callback(JSON.parse(content));
           console.log(colors.green("====> Mensagem processada!"));
         } catch (err) {
-          if (retries < MAX_RETRIES) {
-            console.log(colors.yellow("====> Realizando outra tentativa!"));
-            channel.sendToQueue(queue, Buffer.from(content), {
-              headers: { "x-retries": retries + 1},
-              persistent: true,
-            });
+          console.log(colors.red("====> Erro ao processar mensagem:"), err.message);
+          
+          const shouldRetry = !err.message.includes('Validation error') && 
+                             !err.message.includes('Dados incompletos') &&
+                             !err.message.includes('required') &&
+                             retries < MAX_RETRIES;
+          
+          if (shouldRetry) {
+            console.log(colors.yellow(`====> Realizando tentativa ${retries + 1}/${MAX_RETRIES}!`));
+            
+            const delay = Math.min(1000 * Math.pow(2, retries), 30000);
+            setTimeout(() => {
+              channel.sendToQueue(queue, Buffer.from(content), {
+                headers: { "x-retries": retries + 1},
+                persistent: true,
+              });
+            }, delay);
           } else {
             console.log(colors.red("====> Mensagem enviada para DLQ!"));
+            console.log(colors.red("====> Motivo:"), shouldRetry ? "Máximo de tentativas excedido" : "Erro não recuperável");
+            
             channel.publish(exchange, "dlq", Buffer.from(content), {
-              headers: { "x-retries": retries },
+              headers: { 
+                "x-retries": retries,
+                "x-error": err.message,
+                "x-error-type": shouldRetry ? "max-retries" : "validation-error"
+              },
               persistent: true,
             });
           }

@@ -1,19 +1,22 @@
 import { Router } from "express";
 
 import {
-  showMessage,
-  createMessage,
+  getTranslationStatus,
+  createTranslation,
   showAllMessages,
-  updateMessage
+  updateTranslation,
+  getSupportedLanguages
 } from "../controllers/translationController.js";
 
 import validator from "../middlewares/validator.js";
 import schema from "./messageValidator.js";
 
 const router = Router();
-router.get("/:_id", showMessage);
+
+router.get("/languages", getSupportedLanguages);
+router.post("/", validator(schema), createTranslation);
+router.get("/:requestId", getTranslationStatus);
 router.get("/", showAllMessages);
-router.post("/", validator(schema), createMessage);
-router.patch("/:_id", updateMessage);
+router.patch("/:requestId", updateTranslation);
 
 export default router;

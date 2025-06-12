@@ -1,6 +1,7 @@
 version: '3.8'
 
-services:  # Banco de dados MongoDB
+services:  
+  # Banco de dados MongoDB
   mongodb:
     image: mongo:6.0
     container_name: translation-mongodb
@@ -40,6 +41,7 @@ services:  # Banco de dados MongoDB
       retries: 5
     networks:
       - translation-network
+      
   # API de Tradução
   translation-api:
     build:
@@ -55,7 +57,7 @@ services:  # Banco de dados MongoDB
       - NODE_ENV=development
       - PORT=4040
       - HOST=0.0.0.0
-      - DATABASE=mongodb://mongodb:27020/translation_service
+      - DATABASE=mongodb://mongodb:27017/translation_service
       - RABBITMQ=amqp://admin:admin@rabbitmq:5672
       - CORS_ORIGIN=*
       - API_BASE_URL=http://localhost:4040
@@ -69,6 +71,7 @@ services:  # Banco de dados MongoDB
     volumes:
       - ./translation-api:/app
       - /app/node_modules
+
   # Worker de Tradução
   translation-worker:
     build:
